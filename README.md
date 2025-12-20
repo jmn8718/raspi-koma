@@ -7,6 +7,7 @@ Project to handle scripts of raspberry pi with connected devices
 - Raspberry pi 3 B+
 - Display: OLED 0.91 inches SSD1306 I2C JK-091-12832-Y
 - Switch: YwRobot ELB060677
+- HC-SR04 ultrasonic range sensor
 
 ## setup
 
@@ -30,10 +31,10 @@ Project to handle scripts of raspberry pi with connected devices
 
 ## scripts
 
-There are 2 scripts:
-- [pi_start.py](scripts/pi_start.py): Script to display information from raspberry pi to the display
+- [pi_start.py](scripts/pi_start.py): Script to display information from raspberry pi to the display.
 - [shutdown.py](scripts/shutdown.py): Script that handle button press to shutdown safely the raspberry pi.
+- [ultrasound.py](scripts/ultrasound/ultrasound.py): Script to interact with HC-SR04.
 
 ## systemd services
 
-On the repository, the configuration files for start the scripts on boot
+Configuration files for start the scripts on boot
