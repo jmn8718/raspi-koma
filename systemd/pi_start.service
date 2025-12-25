@@ -7,9 +7,16 @@ ExecStart=/home/motoko/raspi-koma/raspi-koma/bin/python3 /home/motoko/raspi-koma
 WorkingDirectory=/home/motoko
 StandardOutput=inherit
 StandardError=inherit
-Restart=always
+Type=simple
 User=motoko
 Group=motoko
+
+# shutdown process will kill manually this service
+Restart=on-failure
+RestartSec=5s
+
+# ensure clean exit doesn't trigger a restart
+SuccessExitStatus=0
 
 [Install]
 WantedBy=multi-user.target
