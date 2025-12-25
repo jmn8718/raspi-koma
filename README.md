@@ -38,3 +38,8 @@ Project to handle scripts of raspberry pi with connected devices
 ## systemd services
 
 Configuration files for start the scripts on boot
+
+## GPIO
+
+![gpio](./images/gpio.png)
+
