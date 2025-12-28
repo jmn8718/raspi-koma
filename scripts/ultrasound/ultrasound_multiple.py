@@ -5,9 +5,9 @@ from sensor_ultrasound import initialize_sensor
 GPIO.setmode(GPIO.BCM)
 
 # GPIO pin for Trigger of first sensor
-TRIG_PIN_1 = 20 
+TRIG_PIN_1 = 27 
 # GPIO pin for Echo of first sensor
-ECHO_PIN_1 = 21 
+ECHO_PIN_1 = 22 
 
 # GPIO pin for Trigger of second sensor
 TRIG_PIN_2 = 23 
