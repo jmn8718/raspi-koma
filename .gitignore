@@ -2,3 +2,10 @@ __pycache__
 raspi-koma
 bin
 lib64
+
+robot_ws/log
+robot_ws/devel
+robot_ws/build
+robot_ws/install
+
+__pycache__
