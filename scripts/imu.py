@@ -4,7 +4,7 @@ import math
 
 # Initialize Sensor
 sensor = mpu6050.mpu6050(0x68)
-G_CONSTANT = 9.80665
+G_CONSTANT = sensor.GRAVITIY_MS2
 
 # Filter Constants
 ALPHA = 0.96  # Weight for Gyro (blending factor)

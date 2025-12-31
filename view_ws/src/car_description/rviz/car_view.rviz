@@ -1,0 +1,49 @@
+Panels:
+  - Class: rviz_common/Displays
+    Name: Displays
+  - Class: rviz_common/Views
+    Name: Views
+
+Visualization Manager:
+  Class: ""
+  Displays:
+    - Class: rviz_default_plugins/Grid
+      Name: Grid
+      Value: true
+    - Class: rviz_default_plugins/RobotModel
+      Name: RobotModel
+      Value: true
+      Visual Enabled: true
+    - Class: rviz_default_plugins/TF
+      Name: TF
+      Value: true
+      Show Arrows: true
+      Show Axes: true
+      Show Names: true
+    - Class: rviz_default_plugins/Range
+      Name: Left Sonar
+      Topic: /ultrasonic/left
+      Color: 255; 255; 0
+      Alpha: 0.5
+      Value: true
+    - Class: rviz_default_plugins/Range
+      Name: Right Sonar
+      Topic: /ultrasonic/right
+      Color: 255; 255; 0
+      Alpha: 0.5
+      Value: true
+    - Class: rviz_default_plugins/Imu
+      Name: IMU
+      Topic: /imu/data
+      Value: true
+      Show Axes: true
+  Global Options:
+    Fixed Frame: base_link
+    Frame Rate: 30
+  Views:
+    Current:
+      Class: rviz_default_plugins/Orbit
+      Distance: 1.5
+      Focal Point: 0; 0; 0
+      Pitch: 0.3
+      Yaw: 0.78

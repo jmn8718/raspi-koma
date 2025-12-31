@@ -17,16 +17,16 @@ setup(
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='motoko',
+    maintainer='Jose Miguel Navarro',
     maintainer_email='jmn8718@gmail.com',
-    description='ROS 2 controller for Raspberry Pi RC Car',
+    description='ROS 2 controller for raspikoma robot',
     license='Apache-2.0',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'motors = car_controller.motors:main',
-            'sonar = car_controller.sonar_node:main', 
-            # Points to car_controller/sonar_node.py
+            'motors = car_controller.motors_node:main',
+            'sonar = car_controller.sonar_node:main',
+            'imu = car_controller.imu_node:main',
         ],
     },
 )

@@ -35,6 +35,12 @@ def generate_launch_description():
         remappings=[('/image_raw', '/camera/image_raw')]
     )
 
+    imu_node = Node(
+        package='car_controller',
+        executable='imu', # Make sure to add this to setup.py
+        name='imu_node'
+    )
+
     # --- STATIC TRANSFORMS (TF) ---
     # x y z yaw pitch roll parent_frame child_frame
     
@@ -62,6 +68,7 @@ def generate_launch_description():
     return LaunchDescription([
         motor_node,
         sonar_node,
+        imu_node,
         camera_node,
         camera_tf,
         sonar_left_tf,
