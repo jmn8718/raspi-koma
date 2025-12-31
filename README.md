@@ -38,6 +38,8 @@ Project to handle scripts of raspberry pi with connected devices
 - [pi_start.py](scripts/pi_start.py): Script to display information from raspberry pi to the display.
 - [shutdown.py](scripts/shutdown.py): Script that handle button press to shutdown safely the raspberry pi.
 - [ultrasound.py](scripts/ultrasound/ultrasound.py): Script to interact with HC-SR04.
+- [imu.py](scripts/imu.py): Script to interact with MPU-6050.
+- [motors.py](scripts/motors.py): Script to interact with motors, it just move for a few seconds to test the connection.
 
 ## systemd services
 
