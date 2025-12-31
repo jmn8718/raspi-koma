@@ -2,9 +2,11 @@
 
 This project uses ros2 on ubuntu server. Tested with 24.04
 
-## requirements
+## Requirements
 
-You have to install ros2 on the raspberry pi, so you need an Ubuntu server.
+You have to install ROS 2 on the Raspberry Pi, so you need an Ubuntu server running on it.
+
+> **Note:** This guide is for setting up the **Robot (Raspberry Pi)**. If you are setting up your external computer for visualization and control, please see [SETUP_LAPTOP.md](../SETUP_LAPTOP.md).
 
 You need to install some dependencies:
 
@@ -14,14 +16,15 @@ sudo apt install gpiozero python3-yaml python3-gpiozero python3-colcon-common-ex
 
 You might have to install *gpiozero* manually if your system does not include it.
 
-## configuration
+## Configuration
 
-We have to setup a domain id so other devices can identify the domain
+We have to setup a domain ID so other devices can identify the domain. Ensure your laptop uses the same ID.
+
 ```sh
 export ROS_DOMAIN_ID=87
 ```
 
-### build
+### Build
 
 Build the project and generate a ros package
 
@@ -37,7 +40,7 @@ colcon build --symlink-install
 source install/setup.bash
 ```
 
-### run
+### Run
 
 In order to run the package, execute:
 

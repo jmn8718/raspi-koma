@@ -1,6 +1,6 @@
 # RC CAR
 
-This project use a regular RC Car toy as a base, and it has scrapped all the part and only use the chasis and the 2 motors.
+This project uses a regular RC Car toy as a base. We have scrapped all the parts and only use the chassis and the 2 motors.
 
 As the car uses a DC motor for steering, it limits the turning functionality unless it is replaced with a *stepper motor*.
 
@@ -10,7 +10,7 @@ As the car uses a DC motor for steering, it limits the turning functionality unl
 - DC motor for linear movement
 - DC motor for steering
 - 2 HC-SR04 ultrasonic range sensor
-- Raspberry Pi Camera v2 ix219
+- Raspberry Pi Camera v2 IMX219
 - MPU-6050 (GY-521) 6-axis Motion
 
 ## Camera
@@ -40,7 +40,7 @@ By angling them at $25^\circ$:
 
 ## MPU
 
-The MPU-6050 (GY-521) is a 6-axis Motion Tracking device that combines a 3-axis gyroscope, a 3-axis accelerometer and temperture.
+The MPU-6050 (GY-521) is a 6-axis Motion Tracking device that combines a 3-axis gyroscope, a 3-axis accelerometer and temperature sensor.
 
 
 ## Motors
