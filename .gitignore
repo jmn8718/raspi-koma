@@ -8,4 +8,9 @@ robot_ws/devel
 robot_ws/build
 robot_ws/install
 
+view_ws/log
+view_ws/devel
+view_ws/build
+view_ws/install
+
 __pycache__

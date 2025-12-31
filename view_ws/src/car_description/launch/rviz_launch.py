@@ -21,6 +21,12 @@ def generate_launch_description():
             executable='imu_filter_madgwick_node',
             parameters=[{'use_mag': False, 'fixed_frame': 'base_link', 'publish_tf': True}]
         ),
+        # Joint State Publisher
+        Node(
+            package='joint_state_publisher',
+            executable='joint_state_publisher',
+            name='joint_state_publisher'
+        ),
         # Robot State Publisher
         Node(
             package='robot_state_publisher',
@@ -33,7 +39,8 @@ def generate_launch_description():
             executable='rviz2',
             name='rviz2',
             arguments=['-d', rviz_config_file] # <--- This loads your saved view!
-        )
+        ),
+
         # Joy Node (Reads physical controller)
         Node(
             package='joy',
