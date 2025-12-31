@@ -9,17 +9,32 @@ class DualDCMotorController(Node):
     def __init__(self):
         super().__init__('motor_node')
         
+        # --- Parameters ---
+        self.declare_parameter('drive_pwm_pin', 26)
+        self.declare_parameter('drive_in3_pin', 19)
+        self.declare_parameter('drive_in4_pin', 13)
+        self.declare_parameter('steer_pwm_pin', 16)
+        self.declare_parameter('steer_in1_pin', 20)
+        self.declare_parameter('steer_in2_pin', 21)
+
+        drive_pwm = self.get_parameter('drive_pwm_pin').value
+        drive_in3 = self.get_parameter('drive_in3_pin').value
+        drive_in4 = self.get_parameter('drive_in4_pin').value
+        steer_pwm = self.get_parameter('steer_pwm_pin').value
+        steer_in1 = self.get_parameter('steer_in1_pin').value
+        steer_in2 = self.get_parameter('steer_in2_pin').value
+
         factory = PiGPIOFactory()
         
         # --- Drive Motor ---
-        self.drive_pwm = PWMOutputDevice(26, pin_factory=factory)
-        self.drive_in3 = DigitalOutputDevice(19, pin_factory=factory)
-        self.drive_in4 = DigitalOutputDevice(13, pin_factory=factory)
+        self.drive_pwm = PWMOutputDevice(drive_pwm, pin_factory=factory)
+        self.drive_in3 = DigitalOutputDevice(drive_in3, pin_factory=factory)
+        self.drive_in4 = DigitalOutputDevice(drive_in4, pin_factory=factory)
         
         # --- Steering Motor ---
-        self.steer_pwm = PWMOutputDevice(16, pin_factory=factory)
-        self.steer_in1 = DigitalOutputDevice(20, pin_factory=factory)
-        self.steer_in2 = DigitalOutputDevice(21, pin_factory=factory)
+        self.steer_pwm = PWMOutputDevice(steer_pwm, pin_factory=factory)
+        self.steer_in1 = DigitalOutputDevice(steer_in1, pin_factory=factory)
+        self.steer_in2 = DigitalOutputDevice(steer_in2, pin_factory=factory)
         
         # Ramping variables
         self.target_steer = 0.0

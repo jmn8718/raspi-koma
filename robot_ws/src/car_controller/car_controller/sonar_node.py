@@ -18,16 +18,24 @@ class DualSonarNode(Node):
             return
 
         # 2. Configure Sensors
-        # Right Sensor: Trig 27, Echo 22
-        # Left Sensor: Trig 24, Echo 23
+        self.declare_parameter('right_trigger_pin', 27)
+        self.declare_parameter('right_echo_pin', 22)
+        self.declare_parameter('left_trigger_pin', 24)
+        self.declare_parameter('left_echo_pin', 23)
+
+        r_trig = self.get_parameter('right_trigger_pin').value
+        r_echo = self.get_parameter('right_echo_pin').value
+        l_trig = self.get_parameter('left_trigger_pin').value
+        l_echo = self.get_parameter('left_echo_pin').value
+
         try:
             self.sensor_right = DistanceSensor(
-                echo=22, trigger=27, pin_factory=self.factory, max_distance=4.0
+                echo=r_echo, trigger=r_trig, pin_factory=self.factory, max_distance=4.0
             )
             self.sensor_left = DistanceSensor(
-                echo=23, trigger=24, pin_factory=self.factory, max_distance=4.0
+                echo=l_echo, trigger=l_trig, pin_factory=self.factory, max_distance=4.0
             )
-            self.get_logger().info("Sonar sensors initialized (L:22/27, R:23/24)")
+            self.get_logger().info(f"Sonar sensors initialized (L:{l_echo}/{l_trig}, R:{r_echo}/{r_trig})")
         except Exception as e:
             self.get_logger().error(f"Hardware Init Error: {e}")
 

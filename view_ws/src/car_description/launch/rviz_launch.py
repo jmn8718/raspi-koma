@@ -19,8 +19,7 @@ def generate_launch_description():
         Node(
             package='imu_filter_madgwick',
             executable='imu_filter_madgwick_node',
-            parameters=[{'use_mag': False, 'fixed_frame': 'base_link', 'publish_tf': True}],
-            remappings=[('/imu/data_raw', '/imu/data')]
+            parameters=[{'use_mag': False, 'fixed_frame': 'base_link', 'publish_tf': True}]
         ),
         # Robot State Publisher
         Node(

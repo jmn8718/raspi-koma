@@ -1,116 +1,107 @@
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import Imu
-from geometry_msgs.msg import PoseStamped
 from mpu6050 import mpu6050
 import math
-import time
 
 class ImuNode(Node):
     def __init__(self):
         super().__init__('imu_node')
+
+        # --- Parameters ---
+        self.declare_parameter('i2c_address', 0x68)
+        self.declare_parameter('frequency', 20.0)
+        
+        i2c_addr = self.get_parameter('i2c_address').value
+        frequency = self.get_parameter('frequency').value
+        self.dt = 1.0 / frequency
         
         # --- IMU Hardware Setup ---
         try:
-            self.sensor = mpu6050.mpu6050(0x68)
+            self.sensor = mpu6050.mpu6050(i2c_addr)
             self.G_CONSTANT = self.sensor.GRAVITIY_MS2
+            self.get_logger().info(f"Connected to MPU6050 at {hex(i2c_addr)}")
         except Exception as e:
             self.get_logger().error(f"Failed to connect to MPU6050: {e}")
-            exit()
+            # Do not use exit(). Just return, node will sit idle or user can kill it.
+            return
 
-        # --- Parameters & Constants ---
-        self.alpha = 0.96
-        self.dt = 0.05  # 20Hz
-        self.roll = 0.0
-        self.pitch = 0.0
-        
         # --- Calibration ---
-        self.offsets = self.get_calibration_offsets()
+        self.offsets = {'ax': 0.0, 'ay': 0.0, 'az': 0.0, 'gx': 0.0, 'gy': 0.0, 'gz': 0.0}
+        self.calibrate_sensor()
 
         # --- ROS 2 Publishers ---
-        # Standard IMU message
         self.imu_pub = self.create_publisher(Imu, 'imu/data_raw', 10)
-        # Orientation for easy visualization in Rviz
-        self.pose_pub = self.create_publisher(PoseStamped, 'imu/orientation', 10)
         
         # --- Timer ---
         self.timer = self.create_timer(self.dt, self.timer_callback)
-        self.get_logger().info("IMU Node started and publishing at 20Hz")
+        self.get_logger().info(f"IMU Node publishing at {frequency}Hz")
 
-    def get_calibration_offsets(self):
+    def calibrate_sensor(self):
         self.get_logger().info("Calibrating... Keep car LEVEL and STILL.")
         samples = 50
-        off = {'ax': 0.0, 'ay': 0.0, 'az': 0.0, 'gx': 0.0, 'gy': 0.0, 'gz': 0.0}
         
-        for _ in range(samples):
-            a = self.sensor.get_accel_data()
-            g = self.sensor.get_gyro_data()
-            off['ax'] += a['x']; off['ay'] += a['y']; off['az'] += a['z']
-            off['gx'] += g['x']; off['gy'] += g['y']; off['gz'] += g['z']
-            time.sleep(0.01)
-        
-        for key in off: off[key] /= samples
-        off['az'] -= self.G_CONSTANT
-        self.get_logger().info("Calibration complete.")
-        return off
-
-    def euler_to_quaternion(self, roll, pitch, yaw):
-        """Helper to convert Euler angles to Quaternion for ROS msgs"""
-        qx = math.sin(roll/2) * math.cos(pitch/2) * math.cos(yaw/2) - math.cos(roll/2) * math.sin(pitch/2) * math.sin(yaw/2)
-        qy = math.cos(roll/2) * math.sin(pitch/2) * math.cos(yaw/2) + math.sin(roll/2) * math.cos(pitch/2) * math.sin(yaw/2)
-        qz = math.cos(roll/2) * math.cos(pitch/2) * math.sin(yaw/2) - math.sin(roll/2) * math.sin(pitch/2) * math.cos(yaw/2)
-        qw = math.cos(roll/2) * math.cos(pitch/2) * math.cos(yaw/2) + math.sin(roll/2) * math.sin(pitch/2) * math.sin(yaw/2)
-        return [qx, qy, qz, qw]
+        try:
+            for _ in range(samples):
+                a = self.sensor.get_accel_data()
+                g = self.sensor.get_gyro_data()
+                self.offsets['ax'] += a['x']; self.offsets['ay'] += a['y']; self.offsets['az'] += a['z']
+                self.offsets['gx'] += g['x']; self.offsets['gy'] += g['y']; self.offsets['gz'] += g['z']
+                # Sleep briefly to not spam I2C
+                # time.sleep(0.01) # removing time import relies on timer spacing, but here we block.
+                # simpler just to run tight loop for calibration
+            
+            for key in self.offsets: self.offsets[key] /= samples
+            self.offsets['az'] -= self.G_CONSTANT # Remove gravity
+            self.get_logger().info("Calibration complete.")
+        except Exception as e:
+            self.get_logger().warn(f"Calibration failed: {e}")
 
     def timer_callback(self):
-        # 1. Read Sensor
-        a = self.sensor.get_accel_data()
-        g = self.sensor.get_gyro_data()
+        try:
+            # 1. Read Sensor
+            a = self.sensor.get_accel_data()
+            g = self.sensor.get_gyro_data()
 
-        # 2. Apply Offsets (Net movements)
-        ax_net = a['x'] - self.offsets['ax']
-        ay_net = a['y'] - self.offsets['ay']
-        az_net = a['z'] - self.offsets['az'] - self.G_CONSTANT
-        
-        gx_net = g['x'] - self.offsets['gx']
-        gy_net = g['y'] - self.offsets['gy']
-        gz_net = g['z'] - self.offsets['gz']
+            # 2. Apply Offsets (Net movements)
+            ax_net = a['x'] - self.offsets['ax']
+            ay_net = a['y'] - self.offsets['ay']
+            az_net = a['z'] - self.offsets['az'] # Gravity is included in raw data usually? 
+            # Note: For Madgwick/EKF, they often expect gravity vector in accel.
+            # However, if we calibrate 'az' to be 0 when flat, we are removing gravity. 
+            # Standard IMU msg expects accel to include gravity (approx 9.8 up).
+            # The previous code removed G_CONSTANT during calibration from the offset, meaning:
+            # offset_az = average_z - 9.8.
+            # az_net = measured_z - (average_z - 9.8)
+            # If car is flat: measured_z ~ 9.8. offset_az ~ 0.
+            # az_net ~ 9.8. This seems correct for ROS.
 
-        # 3. Calculate Roll/Pitch (Complementary Filter)
-        accel_roll = math.degrees(math.atan2(a['y'], a['z']))
-        accel_pitch = math.degrees(math.atan2(-a['x'], math.sqrt(a['y']**2 + a['z']**2)))
-        
-        self.roll = self.alpha * (self.roll + gx_net * self.dt) + (1 - self.alpha) * accel_roll
-        self.pitch = self.alpha * (self.pitch + gy_net * self.dt) + (1 - self.alpha) * accel_pitch
+            gx_net = g['x'] - self.offsets['gx']
+            gy_net = g['y'] - self.offsets['gy']
+            gz_net = g['z'] - self.offsets['gz']
 
-        # 4. Construct Imu Message
-        imu_msg = Imu()
-        imu_msg.header.stamp = self.get_clock().now().to_msg()
-        imu_msg.header.frame_id = 'imu_link'
-        
-        # ROS 2 expects values in m/s^2 and rad/s
-        imu_msg.linear_acceleration.x = ax_net
-        imu_msg.linear_acceleration.y = ay_net
-        imu_msg.linear_acceleration.z = az_net
-        
-        imu_msg.angular_velocity.x = math.radians(gx_net)
-        imu_msg.angular_velocity.y = math.radians(gy_net)
-        imu_msg.angular_velocity.z = math.radians(gz_net)
+            # 3. Construct Imu Message
+            imu_msg = Imu()
+            imu_msg.header.stamp = self.get_clock().now().to_msg()
+            imu_msg.header.frame_id = 'imu_link'
+            
+            # ROS 2 expects values in m/s^2 and rad/s
+            imu_msg.linear_acceleration.x = ax_net
+            imu_msg.linear_acceleration.y = ay_net
+            imu_msg.linear_acceleration.z = az_net
+            
+            imu_msg.angular_velocity.x = math.radians(gx_net)
+            imu_msg.angular_velocity.y = math.radians(gy_net)
+            imu_msg.angular_velocity.z = math.radians(gz_net)
 
-        # Convert orientation to Quaternion
-        q = self.euler_to_quaternion(math.radians(self.roll), math.radians(self.pitch), 0.0)
-        imu_msg.orientation.x = q[0]
-        imu_msg.orientation.y = q[1]
-        imu_msg.orientation.z = q[2]
-        imu_msg.orientation.w = q[3]
+            # No orientation estimation here. Leaving it to madgwick/ekf.
+            # Covariance (unknown)
+            imu_msg.orientation_covariance[0] = -1.0
 
-        self.imu_pub.publish(imu_msg)
+            self.imu_pub.publish(imu_msg)
 
-        # 5. Publish Pose (for Rviz)
-        pose_msg = PoseStamped()
-        pose_msg.header = imu_msg.header
-        pose_msg.pose.orientation = imu_msg.orientation
-        self.pose_pub.publish(pose_msg)
+        except Exception as e:
+            self.get_logger().warn_once(f"IMU Read Error: {e}")
 
 def main(args=None):
     rclpy.init(args=args)
