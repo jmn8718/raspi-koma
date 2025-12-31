@@ -11,6 +11,7 @@ As the car uses a DC motor for steering, it limits the turning functionality unl
 - DC motor for steering
 - 2 HC-SR04 ultrasonic range sensor
 - Raspberry Pi Camera v2 ix219
+- MPU-6050 (GY-521) 6-axis Motion
 
 ## Camera
 
@@ -36,6 +37,11 @@ By angling them at $25^\circ$:
 - *The Overlap*: The sensors will still have a slight overlap in the far field (more than 1 meter away), meaning you won't have a blind spot in the distance.
 - *The Corners*: As the car approaches a wall at an angle, the "outside" sensor will pick it up much earlier, giving your navigation code time to react before the chassis hits the obstacle.
 - *The Width*: You effectively widen your detection "aperture" to cover roughly the full width of your car plus a safety margin on the sides.
+
+## MPU
+
+The MPU-6050 (GY-521) is a 6-axis Motion Tracking device that combines a 3-axis gyroscope, a 3-axis accelerometer and temperture.
+
 
 ## Motors
 

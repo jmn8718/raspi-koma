@@ -8,13 +8,14 @@ Project to handle scripts of raspberry pi with connected devices
 - Display: OLED 0.91 inches SSD1306 I2C JK-091-12832-Y
 - Switch: YwRobot ELB060677
 - HC-SR04 ultrasonic range sensor
+- MPU-6050 (GY-521) 6-axis Motion
 
 ## setup
 
 ### i2c
 - Enable i2c on the raspberry. `sudo raspi-config` and enable it
 - Install i2c package`sudo apt-get install -y i2c-tools`
-- Get the address of the i2c display `i2cdetect -y 1`
+- Get the address of the i2c display `i2cdetect -y 1`. It should show `3c` for the *SSD1306* and `68` for *MPU-6050*
 
 ### OS packages
 - Install dependencies `sudo apt-get install python3-pip python3-pil libjpeg-dev zlib1g-dev libfreetype6-dev liblcms2-dev libopenjp2-7 libtiff5-dev`
@@ -26,6 +27,7 @@ Project to handle scripts of raspberry pi with connected devices
 - Install python packages:
   - `pip3 install luma.oled`
   - `pip3 install psutil`
+  - `pip3 install mpu6050-raspberrypi smbus scipy`
   - `pip3 install RPi.GPIO`
   - `pip3 install adafruit-blinka adafruit-circuitpython-ssd1306`
   - `pip3 install pyyaml`
