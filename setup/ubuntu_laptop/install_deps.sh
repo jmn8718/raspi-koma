@@ -13,5 +13,7 @@ sudo apt install -y \
     ros-jazzy-rviz2 \
     ros-jazzy-xacro \
     ros-jazzy-joint-state-publisher \
-    ros-jazzy-joint-state-publisher-gui
+    ros-jazzy-joint-state-publisher-gui \
+    ros-jazzy-rosbridge-server \
+    ros-jazzy-web-video-server
 

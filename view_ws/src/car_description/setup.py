@@ -4,6 +4,17 @@ from setuptools import setup
 
 package_name = 'car_description'
 
+# Function to collect all files in a directory recursively
+def get_web_files():
+    data_files = []
+    for root, dirs, files in os.walk('web'):
+        install_path = os.path.join('share', package_name, root)
+        # Get full paths of files
+        file_paths = [os.path.join(root, f) for f in files]
+        if file_paths:
+            data_files.append((install_path, file_paths))
+    return data_files
+
 setup(
     name=package_name,
     version='0.0.1',
@@ -29,7 +40,8 @@ setup(
         # Install config files (e.g., joystick.yaml)
         (os.path.join('share', package_name, 'config'),
             glob(os.path.join('config', '*.yaml'))),
-    ],
+            
+    ] + get_web_files(),
     install_requires=['setuptools'],
     zip_safe=True,
     maintainer='Jose Miguel Navarro',

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raspi-Koma Dashboard</title>
+    <!-- Roslibjs -->
+    <script src="https://cdn.jsdelivr.net/npm/eventemitter2@6.4.9/lib/eventemitter2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/roslib@1/build/roslib.min.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <header>
+            <div class="logo">
+                <i data-lucide="zap"></i>
+                <h1>RASPI-KOMA <span class="highlight">DASHBOARD</span></h1>
+            </div>
+            <div class="status-bar">
+                <div id="connection-status" class="status-badge disconnected">
+                    <span class="indicator"></span> Disconnected
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <!-- Left Column: Camera Feed -->
+            <section class="camera-section">
+                <div class="card video-card">
+                    <div class="card-header">
+                        <i data-lucide="camera"></i>
+                        <h2>Live Feed</h2>
+                    </div>
+                    <div class="video-container">
+                        <img id="camera-stream" src="" alt="Waiting for stream..." />
+                        <div class="overlay">
+                            <span class="rec-dot"></span> LIVE
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Column: Telemetry -->
+            <section class="telemetry-section">
+
+                <!-- Motor Status -->
+                <div class="card motor-card">
+                    <div class="card-header">
+                        <i data-lucide="activity"></i>
+                        <h2>Motor Status</h2>
+                    </div>
+                    <div class="motor-display">
+                        <div class="speed-gauge">
+                            <span class="speed-value" id="motor-speed">0.0</span>
+                            <span class="speed-unit">m/s</span>
+                        </div>
+                        <div class="direction-grid">
+                            <div class="arrow up" id="arrow-up"><i data-lucide="chevron-up"></i></div>
+                            <div class="arrow left" id="arrow-left"><i data-lucide="chevron-left"></i></div>
+                            <div class="arrow down" id="arrow-down"><i data-lucide="chevron-down"></i></div>
+                            <div class="arrow right" id="arrow-right"><i data-lucide="chevron-right"></i></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sonar Sensors -->
+                <div class="card sonar-card">
+                    <div class="card-header">
+                        <i data-lucide="radar"></i>
+                        <h2>Proximity Sensors</h2>
+                    </div>
+                    <div class="sensor-bars">
+                        <div class="sensor-row">
+                            <span class="label">Front Left</span>
+                            <div class="bar-container">
+                                <div class="bar-fill" id="sonar-left-bar" style="width: 0%"></div>
+                            </div>
+                            <span class="value" id="sonar-left-val">-- m</span>
+                        </div>
+                        <div class="sensor-row">
+                            <span class="label">Front Right</span>
+                            <div class="bar-container">
+                                <div class="bar-fill" id="sonar-right-bar" style="width: 0%"></div>
+                            </div>
+                            <span class="value" id="sonar-right-val">-- m</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- IMU Data -->
+                <div class="card imu-card">
+                    <div class="card-header">
+                        <i data-lucide="compass"></i>
+                        <h2>IMU Orientation</h2>
+                    </div>
+                    <div class="imu-grid">
+                        <div class="imu-item">
+                            <span class="label">ROLL</span>
+                            <span class="value" id="imu-roll">0°</span>
+                        </div>
+                        <div class="imu-item">
+                            <span class="label">PITCH</span>
+                            <span class="value" id="imu-pitch">0°</span>
+                        </div>
+                        <div class="imu-item">
+                            <span class="label">YAW</span>
+                            <span class="value" id="imu-yaw">0°</span>
+                        </div>
+                    </div>
+
+                    <!-- Raw Data Section -->
+                    <div class="raw-imu-container">
+                        <h3>Raw Data</h3>
+                        <div class="raw-data-grid">
+                            <div class="raw-group">
+                                <span class="group-label">Accel (m/s²)</span>
+                                <div class="raw-values">
+                                    <span>X: <span id="accel-x" class="mono">0.00</span></span>
+                                    <span>Y: <span id="accel-y" class="mono">0.00</span></span>
+                                    <span>Z: <span id="accel-z" class="mono">0.00</span></span>
+                                </div>
+                            </div>
+                            <div class="raw-group">
+                                <span class="group-label">Gyro (rad/s)</span>
+                                <div class="raw-values">
+                                    <span>X: <span id="gyro-x" class="mono">0.00</span></span>
+                                    <span>Y: <span id="gyro-y" class="mono">0.00</span></span>
+                                    <span>Z: <span id="gyro-z" class="mono">0.00</span></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+        </main>
+    </div>
+    <script src="script.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>
