@@ -1,4 +1,14 @@
-<link name="left_wheel">
+<robot name="raspi_koma">
+
+  <link name="base_link">
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0.02"/>
+      <geometry><box size="0.2 0.1 0.04"/></geometry>
+      <material name="blue"><color rgba="0 0 0.8 1"/></material>
+    </visual>
+  </link>
+
+  <link name="left_wheel">
     <visual>
       <origin rpy="1.5708 0 0" xyz="0 0 0"/>
       <geometry><cylinder length="0.04" radius="0.035"/></geometry>
@@ -9,7 +19,8 @@
   <joint name="left_wheel_joint" type="continuous">
     <parent link="base_link"/><child link="left_wheel"/>
     <origin xyz="-0.05 0.08 0" rpy="0 0 0"/>
-    <axis xyz="0 1 0"/> </joint>
+    <axis xyz="0 1 0"/>
+  </joint>
 
   <link name="right_wheel">
     <visual>
@@ -24,3 +35,5 @@
     <origin xyz="-0.05 -0.08 0" rpy="0 0 0"/>
     <axis xyz="0 1 0"/>
   </joint>
+
+</robot>
