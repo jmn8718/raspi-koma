@@ -4,7 +4,7 @@
   <name>car_controller</name>
   <version>0.0.1</version>
   <description>ROS 2 Jazzy controller for Raspberry Pi 3B+ RC Car with Sonar and Camera</description>
-  <maintainer email="jmn8718@gmail.com">motoko</maintainer>
+  <maintainer email="jmn8718@gmail.com">Jose Miguel Navarro</maintainer>
   <license>Apache-2.0</license>
 
   <depend>rclpy</depend>
