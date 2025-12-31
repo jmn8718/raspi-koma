@@ -1,7 +1,7 @@
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import Imu
-from mpu6050 import mpu6050
+from .mpu6050 import mpu6050
 import math
 
 class ImuNode(Node):

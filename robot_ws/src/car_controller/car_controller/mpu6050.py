@@ -1,31 +1,19 @@
-import smbus
-import math
+import board
+import adafruit_mpu6050
 
 class mpu6050:
     GRAVITIY_MS2 = 9.80665
-    address = None
-    bus = None
+    mpu = None
 
     def __init__(self, address, bus=1):
-        self.address = address
-        self.bus = smbus.SMBus(bus)
-        # Wake up
-        self.bus.write_byte_data(self.address, 0x6B, 0x00)
-
-    def read_i2c_word(self, register):
-        high = self.bus.read_byte_data(self.address, register)
-        low = self.bus.read_byte_data(self.address, register + 1)
-        value = (high << 8) + low
-        if (value >= 0x8000):
-            return -((65535 - value) + 1)
-        else:
-            return value
+        i2c = board.I2C()
+        self.mpu = adafruit_mpu6050.MPU6050(i2c)
 
     def get_accel_data(self, g=False):
         # Default range +/- 2g; LSB sensitivity = 16384 LSB/g
-        x = self.read_i2c_word(0x3B)
-        y = self.read_i2c_word(0x3D)
-        z = self.read_i2c_word(0x3F)
+        x = self.mpu.acceleration[0]
+        y = self.mpu.acceleration[1]
+        z = self.mpu.acceleration[2]
         
         vals = {}
         vals["x"] = x / 16384.0
@@ -42,9 +30,9 @@ class mpu6050:
 
     def get_gyro_data(self):
         # Default range +/- 250 deg/s; LSB = 131 LSB/deg/s
-        x = self.read_i2c_word(0x43)
-        y = self.read_i2c_word(0x45)
-        z = self.read_i2c_word(0x47)
+        x = self.mpu.gyro[0]
+        y = self.mpu.gyro[1]
+        z = self.mpu.gyro[2]
         
         vals = {}
         vals["x"] = x / 131.0
