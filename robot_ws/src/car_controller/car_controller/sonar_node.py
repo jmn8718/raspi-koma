@@ -81,8 +81,8 @@ class DualSonarNode(Node):
     def stop_sensors(self):
         """Crucial: Shut down the sensors to stop background threads"""
         self.get_logger().info("Stopping Sonar background threads...")
-        self.left_sensor.close()
-        self.right_sensor.close()
+        self.sensor_left.close()
+        self.sensor_right.close()
 
 def main(args=None):
     rclpy.init(args=args)
