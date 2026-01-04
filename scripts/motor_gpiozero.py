@@ -4,10 +4,10 @@ from time import sleep
 # --- Motor Configuration ---
 # Motor(forward, backward, enable)
 # For F/B motor: IN3=19, IN4=13, ENB=26
-motor_fb = Motor(forward=13, backward=19, enable=26)
+motor_fb = Motor(forward=20, backward=21, enable=16)
 
 # For L/R motor: IN1=20, IN2=21, ENA=16
-motor_lr = Motor(forward=20, backward=21, enable=16)
+motor_lr = Motor(forward=13, backward=19, enable=26)
 
 try:
     # --- F/B Motor Tests ---
@@ -25,7 +25,7 @@ try:
 
     # --- L/R Motor Tests ---
     print("Motor LEFT - 50% Speed")
-    motor_lr.backward(0.5) # Based on your original IN1 LOW, IN2 HIGH
+    motor_lr.backward(0.7) # Based on your original IN1 LOW, IN2 HIGH
     sleep(3)
 
     print("Stopping Motor L/R")
