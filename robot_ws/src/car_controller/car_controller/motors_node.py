@@ -10,12 +10,12 @@ class DualDCMotorController(Node):
         super().__init__('motor_node')
         
         # --- Parameters ---
-        self.declare_parameter('drive_pwm_pin', 26)
-        self.declare_parameter('drive_in3_pin', 19)
-        self.declare_parameter('drive_in4_pin', 13)
-        self.declare_parameter('steer_pwm_pin', 16)
-        self.declare_parameter('steer_in1_pin', 20)
-        self.declare_parameter('steer_in2_pin', 21)
+        self.declare_parameter('drive_pwm_pin', 16)
+        self.declare_parameter('drive_in3_pin', 21)
+        self.declare_parameter('drive_in4_pin', 20)
+        self.declare_parameter('steer_pwm_pin', 26)
+        self.declare_parameter('steer_in1_pin', 19)
+        self.declare_parameter('steer_in2_pin', 13)
 
         drive_pwm = self.get_parameter('drive_pwm_pin').value
         drive_in3 = self.get_parameter('drive_in3_pin').value
@@ -49,8 +49,11 @@ class DualDCMotorController(Node):
         self.get_logger().info("Motor Node: 2-Step Steering & Ramping enabled")
 
     def listener_callback(self, msg):
-        # 1. Drive Logic
         linear_x = msg.linear.x
+        angular_z = msg.angular.z
+        # self.get_logger().debug(f"Linear x {linear_x} | z {angular_z}")
+
+        # 1. Drive Logic
         if linear_x > 0:
             self.drive_in3.on(); self.drive_in4.off()
             self.drive_pwm.value = min(abs(linear_x), 1.0)
@@ -61,13 +64,18 @@ class DualDCMotorController(Node):
             self.drive_pwm.value = 0
 
         # 2. Steering Logic (2-Step target setting)
-        angular_z = msg.angular.z
         abs_z = abs(angular_z)
 
-        if abs_z > 0.5:
+        # For now disable as it does not apply much turn
+        # if abs_z > 0.5:
+        #     self.target_steer = 1.0  # FULL
+        # elif abs_z > 0.1:
+        #     self.target_steer = 0.5  # HALF
+        #     if abs_z > 0.5:
+        #     self.target_steer = 1.0  # FULL
+
+        if abs_z > 0.1:
             self.target_steer = 1.0  # FULL
-        elif abs_z > 0.1:
-            self.target_steer = 0.5  # HALF
         else:
             self.target_steer = 0.0  # CENTER
 
@@ -99,7 +107,8 @@ def main(args=None):
         node.drive_pwm.value = 0
         node.steer_pwm.value = 0
         node.destroy_node()
-        rclpy.shutdown()
+        if rclpy.ok():
+            rclpy.shutdown()
 
 if __name__ == '__main__':
     main()

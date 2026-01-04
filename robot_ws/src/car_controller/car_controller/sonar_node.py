@@ -45,11 +45,12 @@ class DualSonarNode(Node):
 
         # 4. Create Timer (10Hz = 0.1s interval)
         self.timer = self.create_timer(0.1, self.timer_callback)
+        self.get_logger().info("Sonar Node with pigpio factory started.")
 
-    def create_range_msg(self, frame_id, distance_m):
+    def create_range_msg(self, frame_id, distance_m, timestamp):
         """Helper to build a standard ROS 2 Range message."""
         msg = Range()
-        msg.header.stamp = self.get_clock().now().to_msg()
+        msg.header.stamp = timestamp
         msg.header.frame_id = frame_id
         msg.radiation_type = Range.ULTRASOUND
         msg.field_of_view = 0.52  # ~30 degrees in radians
@@ -65,16 +66,23 @@ class DualSonarNode(Node):
             # Read distances in meters
             dist_l = self.sensor_left.distance
             dist_r = self.sensor_right.distance
+            # self.get_logger().debug(f"Left: {dist_l*100:.1f}cm | Right: {dist_r*100:.1f}cm")
 
-            # Publish messages
-            self.pub_left.publish(self.create_range_msg('sonar_left_link', dist_l))
-            self.pub_right.publish(self.create_range_msg('sonar_right_link', dist_r))
-
-            # Optional: Log data to console for debugging
-            # self.get_logger().info(f"Left: {dist_l*100:.1f}cm | Right: {dist_r*100:.1f}cm")
+            now = self.get_clock().now().to_msg()            
+            l_msg = self.create_range_msg('sonar_left_link', dist_l, now)
+            r_msg = self.create_range_msg('sonar_right_link', dist_r, now)
+            
+            self.pub_left.publish(l_msg)
+            self.pub_right.publish(r_msg)
 
         except Exception as e:
             self.get_logger().warn(f"Failed to read sonar: {e}")
+
+    def stop_sensors(self):
+        """Crucial: Shut down the sensors to stop background threads"""
+        self.get_logger().info("Stopping Sonar background threads...")
+        self.left_sensor.close()
+        self.right_sensor.close()
 
 def main(args=None):
     rclpy.init(args=args)
@@ -85,8 +93,16 @@ def main(args=None):
     except KeyboardInterrupt:
         node.get_logger().info("Sonar node stopping...")
     finally:
+        # 1. Manually close the sensors to stop gpiozero/pigpio threads
+        # This prevents the 'NoneType' object has no attribute 'send' error
+        node.stop_sensors()
+        
+        # 2. Destroy the node
         node.destroy_node()
-        rclpy.shutdown()
+        
+        # 3. Shutdown ROS 2 safely (prevents 'rcl_shutdown already called')
+        if rclpy.ok():
+            rclpy.shutdown()
 
 if __name__ == '__main__':
     main()

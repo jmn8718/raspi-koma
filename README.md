@@ -29,7 +29,7 @@ Project to handle scripts of raspberry pi with connected devices
   - `pip3 install psutil`
   - `pip3 install mpu6050-raspberrypi smbus scipy`
   - `pip3 install RPi.GPIO`
-  - `pip3 install adafruit-blinka adafruit-circuitpython-ssd1306`
+  - `pip3 install adafruit-blinka adafruit-circuitpython-ssd1306 adafruit-circuitpython-mpu6050`
   - `pip3 install pyyaml`
 - Or install using requirements file `pip3 install -r requirements.txt`
 

@@ -18,8 +18,7 @@ class ImuNode(Node):
         
         # --- IMU Hardware Setup ---
         try:
-            self.sensor = mpu6050.mpu6050(i2c_addr)
-            self.G_CONSTANT = self.sensor.GRAVITIY_MS2
+            self.sensor = mpu6050(i2c_addr)
             self.get_logger().info(f"Connected to MPU6050 at {hex(i2c_addr)}")
         except Exception as e:
             self.get_logger().error(f"Failed to connect to MPU6050: {e}")
@@ -52,7 +51,7 @@ class ImuNode(Node):
                 # simpler just to run tight loop for calibration
             
             for key in self.offsets: self.offsets[key] /= samples
-            self.offsets['az'] -= self.G_CONSTANT # Remove gravity
+            self.offsets['az'] -= self.sensor.GRAVITIY_MS2 # Remove gravity
             self.get_logger().info("Calibration complete.")
         except Exception as e:
             self.get_logger().warn(f"Calibration failed: {e}")
@@ -101,7 +100,7 @@ class ImuNode(Node):
             self.imu_pub.publish(imu_msg)
 
         except Exception as e:
-            self.get_logger().warn_once(f"IMU Read Error: {e}")
+            self.get_logger().warn(f"IMU Read Error: {e}")
 
 def main(args=None):
     rclpy.init(args=args)
@@ -112,7 +111,8 @@ def main(args=None):
         pass
     finally:
         node.destroy_node()
-        rclpy.shutdown()
+        if rclpy.ok():
+            rclpy.shutdown()
 
 if __name__ == '__main__':
     main()
