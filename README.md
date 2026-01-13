@@ -27,8 +27,9 @@ Rotation: 25 degrees
 
 ## Camera
 
-X: center of vehicle
-Y: 7cm over the bottom
+X: 7cm behind the front
+Y: center of the vehicle (width)
+Z: 7cm over the bottom
 
 ## Components
 
