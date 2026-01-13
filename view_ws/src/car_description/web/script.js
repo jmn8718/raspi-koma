@@ -127,7 +127,7 @@ imuListener.subscribe((message) => {
 // 3. Sonar Sensors
 const sonarLeftListener = new ROSLIB.Topic({
     ros: ros,
-    name: '/ultrasonic/left',
+    name: '/ultrasonic/front_left',
     messageType: 'sensor_msgs/Range'
 });
 
@@ -137,7 +137,7 @@ sonarLeftListener.subscribe((msg) => {
 
 const sonarRightListener = new ROSLIB.Topic({
     ros: ros,
-    name: '/ultrasonic/right',
+    name: '/ultrasonic/front_right',
     messageType: 'sensor_msgs/Range'
 });
 

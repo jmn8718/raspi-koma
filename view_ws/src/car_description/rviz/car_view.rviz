@@ -126,7 +126,7 @@ Visualization Manager:
         Filter size: 10
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: /ultrasonic/left
+        Value: /ultrasonic/front_left
       Value: true
     - Alpha: 0.5
       Buffer Length: 1
@@ -140,7 +140,7 @@ Visualization Manager:
         Filter size: 10
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: /ultrasonic/right
+        Value: /ultrasonic/front_right
       Value: true
     - Acceleration properties:
         Acc. vector alpha: 1

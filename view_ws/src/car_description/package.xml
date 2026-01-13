@@ -3,7 +3,7 @@
 <package format="3">
   <name>car_description</name>
   <version>0.0.1</version>
-  <description>Robot URDF description and visualization tools for Tachikoma</description>
+  <description>Robot URDF description and visualization tools for rc car</description>
   <maintainer email="motoko@todo.todo">motoko</maintainer>
   <license>Apache-2.0</license>
 

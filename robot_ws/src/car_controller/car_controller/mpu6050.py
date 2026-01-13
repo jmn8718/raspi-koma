@@ -5,7 +5,7 @@ class mpu6050:
     GRAVITIY_MS2 = 9.80665
     mpu = None
 
-    def __init__(self, address, bus=1):
+    def __init__(self):
         i2c = board.I2C()
         self.mpu = adafruit_mpu6050.MPU6050(i2c)
 

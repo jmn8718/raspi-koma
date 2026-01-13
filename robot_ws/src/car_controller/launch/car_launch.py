@@ -37,8 +37,12 @@ def generate_launch_description():
 
     imu_node = Node(
         package='car_controller',
-        executable='imu', # Make sure to add this to setup.py
-        name='imu_node'
+        executable='imu',
+        name='imu_node',
+        parameters=[{
+            'i2c_address': 0x68,
+            'frequency': 10.0
+        }]
     )
 
     # --- STATIC TRANSFORMS (TF) ---

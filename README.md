@@ -1,51 +1,82 @@
 # raspi-koma
 
-Project to handle scripts of raspberry pi with connected devices
+This project uses a regular RC Car toy as a base. I have scrapped all the parts and only use the chassis and the 2 motors.
 
-## devices
+As the car uses a DC motor for steering, it limits the turning functionality unless it is replaced with a *stepper motor*.
 
-- Raspberry pi 3 B+
-- Display: OLED 0.91 inches SSD1306 I2C JK-091-12832-Y
-- Switch: YwRobot ELB060677
-- HC-SR04 ultrasonic range sensor
+## Car dimensions
+
+### Frame
+
+Width: 22cm
+Lenght: 43cm
+Height: 7cm
+
+### Tyres
+
+Width: 3cm
+Diameter: 7cm
+Center from Front Tires: 12cm from the front
+Center from Back Tires: 7cm from the back
+Center of tire: 1cm over bottom of the car
+
+### Ultrasonic sensor
+
+Position From center: 4.5cm
+Rotation: 25 degrees
+
+## Camera
+
+X: center of vehicle
+Y: 7cm over the bottom
+
+## Components
+
+- Raspberry Pi 3 B+
+- DC motor for linear movement
+- DC motor for steering
+- 2 HC-SR04 ultrasonic range sensor
+- Raspberry Pi Camera v2 IMX219
 - MPU-6050 (GY-521) 6-axis Motion
 
-## setup
+## Camera
 
-### i2c
-- Enable i2c on the raspberry. `sudo raspi-config` and enable it
-- Install i2c package`sudo apt-get install -y i2c-tools`
-- Get the address of the i2c display `i2cdetect -y 1`. It should show `3c` for the *SSD1306* and `68` for *MPU-6050*
+It uses the camera to provide the car with "eyes".
 
-### OS packages
-- Install dependencies `sudo apt-get install python3-pip python3-pil libjpeg-dev zlib1g-dev libfreetype6-dev liblcms2-dev libopenjp2-7 libtiff5-dev`
+You can test the camera with ros2
 
-### python
+```sh
+ros2 run v4l2_camera v4l2_camera_node --ros-args \
+  -p image_size:="[320,240]" \
+  -p pixel_format:="YUYV"
+```
 
-- Create virtual environment `python3 -m venv raspi-koma`
-- Activate it `source ./raspi-koma/bin/activate`
-- Install python packages:
-  - `pip3 install luma.oled`
-  - `pip3 install psutil`
-  - `pip3 install mpu6050-raspberrypi smbus scipy`
-  - `pip3 install RPi.GPIO`
-  - `pip3 install adafruit-blinka adafruit-circuitpython-ssd1306 adafruit-circuitpython-mpu6050`
-  - `pip3 install pyyaml`
-- Or install using requirements file `pip3 install -r requirements.txt`
+*WARNING* depending of your ubuntu version and your camera, you might need to install the camera and configure it correctly.
 
-## scripts
+## Ultrasonic sensors
 
-- [pi_start.py](scripts/pi_start.py): Script to display information from raspberry pi to the display.
-- [shutdown.py](scripts/shutdown.py): Script that handle button press to shutdown safely the raspberry pi.
-- [ultrasound.py](scripts/ultrasound/ultrasound.py): Script to interact with HC-SR04.
-- [imu.py](scripts/imu.py): Script to interact with MPU-6050.
-- [motors.py](scripts/motors.py): Script to interact with motors, it just move for a few seconds to test the connection.
+With a 4.5 cm gap, if you kept them parallel ($0^\circ$), you would have a narrow "tunnel vision" and might miss a thin obstacle (like a chair leg) that passes right between the sensors or hits the side of the car.
 
-## systemd services
+By angling them at $25^\circ$:
+- *The Overlap*: The sensors will still have a slight overlap in the far field (more than 1 meter away), meaning you won't have a blind spot in the distance.
+- *The Corners*: As the car approaches a wall at an angle, the "outside" sensor will pick it up much earlier, giving your navigation code time to react before the chassis hits the obstacle.
+- *The Width*: You effectively widen your detection "aperture" to cover roughly the full width of your car plus a safety margin on the sides.
 
-Configuration files for start the scripts on boot
+## MPU
 
-## GPIO
+The MPU-6050 (GY-521) is a 6-axis Motion Tracking device that combines a 3-axis gyroscope, a 3-axis accelerometer and temperature sensor.
 
-![gpio](./images/gpio.png)
+
+## Motors
+
+### control 
+
+Once the ros2 package is running, you can control the motors manually with
+
+```sh
+ros2 run teleop_twist_keyboard teleop_twist_keyboard
+```
+When you press 'i', the drive wheels should spin.
+
+When you press 'j' or 'l', the front wheels should steer.
 
