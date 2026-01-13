@@ -22,6 +22,7 @@ class DualSonarNode(Node):
         self.declare_parameter('right_echo_pin', 22)
         self.declare_parameter('left_trigger_pin', 24)
         self.declare_parameter('left_echo_pin', 23)
+        self.declare_parameter('publish_rate_hz', 5.0)
 
         r_trig = self.get_parameter('right_trigger_pin').value
         r_echo = self.get_parameter('right_echo_pin').value
@@ -43,8 +44,11 @@ class DualSonarNode(Node):
         self.pub_left = self.create_publisher(Range, 'ultrasonic/front_left', 10)
         self.pub_right = self.create_publisher(Range, 'ultrasonic/front_right', 10)
 
-        # 4. Create Timer (10Hz = 0.1s interval)
-        self.timer = self.create_timer(0.1, self.timer_callback)
+        # 4. Create Timer
+        rate_hz = float(self.get_parameter('publish_rate_hz').value)
+        if rate_hz <= 0.0:
+            rate_hz = 5.0
+        self.timer = self.create_timer(1.0 / rate_hz, self.timer_callback)
         self.get_logger().info("Sonar Node updated with URDF frame names.")
 
     def create_range_msg(self, frame_id, distance_m, timestamp):
