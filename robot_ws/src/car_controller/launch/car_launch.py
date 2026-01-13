@@ -48,25 +48,25 @@ def generate_launch_description():
     # --- STATIC TRANSFORMS (TF) ---
     # x y z yaw pitch roll parent_frame child_frame
     
-    # Camera: 12cm forward
+    # Camera: centered, 7cm above bottom
     camera_tf = Node(
         package='tf2_ros',
         executable='static_transform_publisher',
-        arguments=['0.12', '0.0', '0.05', '0.0', '0.0', '0.0', 'base_link', 'camera_link']
+        arguments=['0.0', '0.0', '0.035', '0.0', '0.0', '0.0', 'base_link', 'camera_link']
     )
 
-    # Left Sonar: 10cm forward, 4.5cm left, angled 25 deg OUT (+0.436 rad)
+    # Left Sonar: 21.5cm forward, 4.5cm left, 2cm above bottom, angled 25 deg OUT (+0.436 rad)
     sonar_left_tf = Node(
         package='tf2_ros',
         executable='static_transform_publisher',
-        arguments=['0.1', '0.045', '0.0', '0.436', '0.0', '0.0', 'base_link', 'sonar_left_link']
+        arguments=['0.215', '0.045', '-0.02', '0.436', '0.0', '0.0', 'base_link', 'front_left_sonar']
     )
 
-    # Right Sonar: 10cm forward, 4.5cm right, angled 25 deg OUT (-0.436 rad)
+    # Right Sonar: 21.5cm forward, 4.5cm right, 2cm above bottom, angled 25 deg OUT (-0.436 rad)
     sonar_right_tf = Node(
         package='tf2_ros',
         executable='static_transform_publisher',
-        arguments=['0.1', '-0.045', '0.0', '-0.436', '0.0', '0.0', 'base_link', 'sonar_right_link']
+        arguments=['0.215', '-0.045', '-0.02', '-0.436', '0.0', '0.0', 'base_link', 'front_right_sonar']
     )
 
     return LaunchDescription([
