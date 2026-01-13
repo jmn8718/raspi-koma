@@ -18,7 +18,7 @@ class ImuNode(Node):
         
         # --- IMU Hardware Setup ---
         try:
-            self.sensor = mpu6050(i2c_addr)
+            self.sensor = mpu6050(i2c_addr, frequency)
             self.get_logger().info(f"Connected to MPU6050 at {hex(i2c_addr)}")
         except Exception as e:
             self.get_logger().error(f"Failed to connect to MPU6050: {e}")
