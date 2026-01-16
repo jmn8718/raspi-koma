@@ -4,6 +4,13 @@ This project uses a regular RC Car toy as a base. I have scrapped all the parts 
 
 As the car uses a DC motor for steering, it limits the turning functionality unless it is replaced with a *stepper motor*.
 
+## Components
+
+## Boards
+
+- Raspberry pi 3B+
+- ESP32-S3 (QFN56) (revision v0.2)
+
 ## Car dimensions
 
 ### Frame

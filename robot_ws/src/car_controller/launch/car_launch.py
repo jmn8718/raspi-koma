@@ -4,13 +4,34 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
     
-    # 1. Motor Control Node
-    motor_node = Node(
-        package='car_controller',
-        executable='motors',
-        name='motor_node',
+    # 1. Micro-ROS Agent Node
+    micro_ros_agent = Node(
+        package='micro_ros_agent',
+        executable='micro_ros_agent',
+        name='micro_ros_agent',
+        arguments=['serial', '--dev', '/dev/ttyACM0', '-b', '115200'],
         output='screen'
     )
+
+    # Motor and IMU nodes are disabled as they are moved to ESP32-S3 board.
+    # Motor Control Node
+    # motor_node = Node(
+    #     package='car_controller',
+    #     executable='motors',
+    #     name='motor_node',
+    #     output='screen'
+    # )
+
+    # IMU Node
+    # imu_node = Node(
+    #     package='car_controller',
+    #     executable='imu',
+    #     name='imu_node',
+    #     parameters=[{
+    #         'i2c_address': 0x68,
+    #         'frequency': 10.0
+    #     }]
+    # )
 
     # 2. Dual Sonar Node (Left Front & Right Front)
     sonar_node = Node(
@@ -33,16 +54,6 @@ def generate_launch_description():
             'output_encoding': 'rgb8',      # ROS standard encoding
         }],
         remappings=[('/image_raw', '/camera/image_raw')]
-    )
-
-    imu_node = Node(
-        package='car_controller',
-        executable='imu',
-        name='imu_node',
-        parameters=[{
-            'i2c_address': 0x68,
-            'frequency': 10.0
-        }]
     )
 
     # --- STATIC TRANSFORMS (TF) ---
@@ -70,9 +81,10 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
-        motor_node,
+        # motor_node,
+        # imu_node,
+        micro_ros_agent,
         sonar_node,
-        imu_node,
         camera_node,
         camera_tf,
         sonar_left_tf,
