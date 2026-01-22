@@ -1,21 +1,8 @@
-import os
 from launch import LaunchDescription
-from launch.actions import ExecuteProcess, TimerAction
+from launch.actions import TimerAction
 from launch_ros.actions import Node
 
 def generate_launch_description():
-    
-    # 0. Reset ESP32 over /dev/ttyACM0 before starting the agent.
-    reset_esp32 = ExecuteProcess(
-        cmd=[
-            '/bin/sh',
-            '-c',
-            "esptool --port /dev/ttyACM0 --after hard-reset chip-id || "
-            "echo 'ESP32 reset skipped: esptool not available'"
-        ],
-        output='screen'
-    )
-
     # 1. Micro-ROS Agent Node
     micro_ros_agent = Node(
         package='micro_ros_agent',
@@ -93,7 +80,6 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
-        reset_esp32,
         TimerAction(period=1.0, actions=[micro_ros_agent]),
         # motor_node,
         # imu_node,

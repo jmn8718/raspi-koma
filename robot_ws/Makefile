@@ -32,12 +32,15 @@ clean-all:
 	@echo "Wiping entire workspace..."
 	rm -rf build/ install/ log/
 
+esp32-stop:
+	esptool --port $(DEVICE) chip-id
+
 # --- RUN ---
-run:
+run: esp32-stop
 	. install/setup.sh && ros2 launch $(PKG_NAME) car_launch.py
 
 # Optional: A separate command to just start the agent for debugging
-agent:
+agent: esp32-stop
 	. install/setup.sh && ros2 run micro_ros_agent micro_ros_agent serial --dev $(DEVICE) -b 115200
 
 agent-debug:
