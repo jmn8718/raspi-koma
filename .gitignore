@@ -16,3 +16,7 @@ view_ws/install
 __pycache__
 
 bags
+
+uros
+ros2.repos
+micro_ros_setup
